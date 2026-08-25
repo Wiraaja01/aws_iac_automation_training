@@ -1,0 +1,11 @@
+---
+- name: Deploy Web Container
+  hosts: webserver
+  become: true
+
+  tasks:
+    - name: Jalankan Nginx Container
+      command: docker run -d -p 80:80 --name my-web-server --restart always nginx:alpine
+      register: result
+      failed_when: false
+      changed_when: result.rc == 0

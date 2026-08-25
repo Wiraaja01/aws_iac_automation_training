@@ -1,0 +1,60 @@
+---
+- name: Automated Server Setup & Docker Installation
+  hosts: webserver
+  become: true
+
+  tasks:
+    - name: Update repository package list
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install paket sistem pendukung
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        state: present
+
+    - name: Buat direktori keyring Docker
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
+    - name: Unduh GPG key resmi Docker
+      get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /etc/apt/keyrings/docker.asc
+        mode: '0644'
+
+    - name: Tambahkan repositori Docker ke Apt
+      apt_repository:
+        repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        state: present
+
+    - name: Install Docker Engine & Docker Compose Plugin
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+        update_cache: yes
+
+    - name: Pastikan service Docker aktif dan otomatis berjalan saat boot
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Masukkan user ubuntu ke grup docker (akses tanpa sudo)
+      user:
+        name: ubuntu
+        groups: docker
+        append: yes
