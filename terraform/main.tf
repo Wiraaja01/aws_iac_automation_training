@@ -4,6 +4,15 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
+}
+# Menambahkan untuk Konfigurasi Backend
+backend "s3"{
+    bucket         = "wira-tfstate-storage-2026"
+    key            = "devops-lab/terraform.tfstate"
+    region         = "ap-southeast-1"
+    dynamodb_table = "terraform-state-locks"
+    use_lockfile   = true
+    encrypt        = true
   }
 }
 
