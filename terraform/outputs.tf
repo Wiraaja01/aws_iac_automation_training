@@ -1,6 +1,6 @@
 output "ec2_public_ip" {
   description = "IP Public server EC2"
-  value       = aws_instance.devops_server.public_ip
+  value       = aws_eip.web_eip.public_ip
 }
 
 output "ssh_command" {

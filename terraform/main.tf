@@ -68,3 +68,8 @@ resource "aws_instance" "devops_server" {
     Name = "DevOps-Automation-Server"
   }
 }
+
+resource "aws_eip" "web_eip" {
+  instance = aws_instance.devops_server.id
+  domain   = "vpc"
+}
