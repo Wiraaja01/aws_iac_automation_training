@@ -33,8 +33,8 @@ jobs:
       - name: Setup SSH Key for Ansible
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/Wira_Keys.pem
-          chmod 600 ~/.ssh/Wira_Keys.pem
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/Wira_keys.pem
+          chmod 600 ~/.ssh/Wira_keys.pem
 
       - name: Run Ansible Setup & Deployment
         run: |
