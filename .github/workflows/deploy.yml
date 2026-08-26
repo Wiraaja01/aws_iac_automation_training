@@ -40,5 +40,5 @@ jobs:
         run: |
           sudo apt update && sudo apt install -y ansible
           cd ansible
-          ansible-playbook setup-ec2.yml
-          ansible-playbook deploy-app.yml
+          ansible-playbook -i inventory.ini setup-ec2.yml
+          ansible-playbook -i inventory.ini deploy-app.yml
