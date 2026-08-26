@@ -31,9 +31,11 @@ jobs:
           terraform apply -auto-approve
 
       - name: Setup SSH Key for Ansible
+        env:
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/Wira_keys.pem
+          echo "$SSH_KEY" > ~/.ssh/Wira_keys.pem
           chmod 600 ~/.ssh/Wira_keys.pem
 
       - name: Run Ansible Setup & Deployment
