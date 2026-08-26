@@ -4,15 +4,14 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
-}
-# Menambahkan untuk Konfigurasi Backend
-backend "s3"{
-    bucket         = "wira-tfstate-storage-2026"
-    key            = "devops-lab/terraform.tfstate"
-    region         = "ap-southeast-1"
-    dynamodb_table = "terraform-state-locks"
-    use_lockfile   = true
-    encrypt        = true
+  }
+
+  backend "s3" {
+    bucket       = "wira-tfstate-storage-2026"
+    key          = "devops-lab/terraform.tfstate"
+    region       = "ap-southeast-1"
+    use_lockfile = true
+    encrypt      = true
   }
 }
 
@@ -20,9 +19,9 @@ provider "aws" {
   region = var.aws_region
 }
 
-# 1. Security Group (Ijinkan port SSH 22, HTTP 80, HTTPS 443)
+# 1. Security Group
 resource "aws_security_group" "web_sg" {
-  name        = "devops-lab-sg-"
+  name        = "devops-lab-sg"
   description = "Security group untuk lab DevOps"
 
   ingress {
@@ -50,7 +49,7 @@ resource "aws_security_group" "web_sg" {
 # 2. Ambil AMI Ubuntu 22.04 LTS Terbaru
 data "aws_ami" "ubuntu" {
   most_recent = true
-  owners      = ["099720109477"] # Canonical ID
+  owners      = ["099720109477"]
 
   filter {
     name   = "name"
