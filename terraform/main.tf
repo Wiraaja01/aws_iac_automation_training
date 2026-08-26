@@ -22,7 +22,7 @@ provider "aws" {
 
 # 1. Security Group (Ijinkan port SSH 22, HTTP 80, HTTPS 443)
 resource "aws_security_group" "web_sg" {
-  name        = "devops-lab-sg"
+  name        = "devops-lab-sg-"
   description = "Security group untuk lab DevOps"
 
   ingress {
