@@ -1,11 +1,27 @@
 ---
-- name: Deploy Web Container
+- name: Deploy Apps & Monitoring via Docker Compose
   hosts: webserver
   become: true
-
   tasks:
-    - name: Jalankan Nginx Container
-      command: docker run -d -p 80:80 --name my-web-server --restart always nginx:alpine
-      register: result
-      failed_when: false
-      changed_when: result.rc == 0
+    - name: Hentikan dan hapus container lama jika ada
+      shell: docker rm -f my-web-server || true
+
+    - name: Buat direktori aplikasi
+      file:
+        path: /opt/webapp
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+
+    - name: Copy file docker-compose dan prometheus config
+      copy:
+        src: "{{ item }}"
+        dest: /opt/webapp/
+      loop:
+        - files/docker-compose.yml
+        - files/prometheus.yml
+
+    - name: Jalankan Docker Compose
+      command: docker compose up -d
+      args:
+        chdir: /opt/webapp
