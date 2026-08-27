@@ -19,11 +19,18 @@ provider "aws" {
   region = var.aws_region
 }
 
-# 1. Security Group
+# 1. VPC default
+data "aws_vpc" "default" {
+  default = true
+}
+
+# 2. Security Group
 resource "aws_security_group" "web_sg" {
   name        = "devops-lab-sg"
   description = "Security group untuk lab DevOps"
+  vpc_id      = data.aws_vpc.default.id
 
+  # Port SSH
   ingress {
     from_port   = 22
     to_port     = 22
@@ -31,9 +38,26 @@ resource "aws_security_group" "web_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Port Nginx Web
   ingress {
     from_port   = 80
     to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Port Grafana
+  ingress {
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Port Prometheus
+  ingress {
+    from_port   = 9090
+    to_port     = 9090
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -46,7 +70,7 @@ resource "aws_security_group" "web_sg" {
   }
 }
 
-# 2. Ambil AMI Ubuntu 22.04 LTS Terbaru
+# 3. Ambil AMI Ubuntu 22.04 LTS Terbaru
 data "aws_ami" "ubuntu" {
   most_recent = true
   owners      = ["099720109477"]
@@ -57,7 +81,7 @@ data "aws_ami" "ubuntu" {
   }
 }
 
-# 3. Instance EC2
+# 4. Instance EC2
 resource "aws_instance" "devops_server" {
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = var.instance_type
