@@ -3,8 +3,23 @@
   hosts: webserver
   become: true
   tasks:
-    - name: Hentikan dan hapus container lama jika ada
-      shell: docker rm -f my-web-server || true
+    - name: Hentikan service Nginx native OS jika berjalan
+      systemd:
+        name: nginx
+        state: stopped
+        enabled: false
+      ignore_errors: true
+
+    - name: Matikan stack Docker Compose lama
+      command: docker compose down --remove-orphans
+      args:
+        chdir: /opt/webapp
+      ignore_errors: true
+
+    - name: Paksa hapus sisa container jika masih ada
+      shell: |
+        docker rm -f my-web-server node_exporter prometheus grafana || true
+      ignore_errors: true
 
     - name: Buat direktori aplikasi
       file:
@@ -12,6 +27,7 @@
         state: directory
         owner: ubuntu
         group: ubuntu
+        mode: '0755'
 
     - name: Copy file docker-compose dan prometheus config
       copy:
@@ -27,4 +43,4 @@
     - name: Jalankan Docker Compose
       command: docker compose up -d
       args:
-        chdir: /opt/webapp
+        chdir: /opt/webapp 
