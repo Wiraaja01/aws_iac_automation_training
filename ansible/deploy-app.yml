@@ -17,6 +17,9 @@
       copy:
         src: "{{ item }}"
         dest: /opt/webapp/
+        owner: ubuntu
+        group: ubuntu
+        mode: '0644'
       loop:
         - monitoring/docker-compose.yml
         - monitoring/prometheus.yml
