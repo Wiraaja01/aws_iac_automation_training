@@ -18,8 +18,8 @@
         src: "{{ item }}"
         dest: /opt/webapp/
       loop:
-        - files/docker-compose.yml
-        - files/prometheus.yml
+        - monitoring/docker-compose.yml
+        - monitoring/prometheus.yml
 
     - name: Jalankan Docker Compose
       command: docker compose up -d
